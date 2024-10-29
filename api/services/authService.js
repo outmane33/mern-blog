@@ -1,7 +1,10 @@
 const expressAsyncHandler = require("express-async-handler");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+
 const User = require("../models/userModel");
 const ApiError = require("../utils/apiError");
-const jwt = require("jsonwebtoken");
+const { sanitizeUser } = require("../utils/sanitizeData");
 
 //generate token
 const generateToken = (id) => {
@@ -26,4 +29,22 @@ exports.signUp = expressAsyncHandler(async (req, res, next) => {
       user,
     },
   });
+});
+
+exports.signIn = expressAsyncHandler(async (req, res, next) => {
+  const user = await User.findOne({ email: req.body.email });
+  if (!user || !(await bcrypt.compare(req.body.password, user.password))) {
+    return next(new ApiError("Invalid email or password", 401));
+  }
+
+  //generate token
+  const token = generateToken(user._id);
+
+  res
+    .status(200)
+    .cookie("access_token", token, { httpOnly: true })
+    .json({
+      status: "success",
+      user: sanitizeUser(user),
+    });
 });
