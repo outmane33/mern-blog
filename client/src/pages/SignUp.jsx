@@ -1,56 +1,127 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { Label, TextInput, Button } from "flowbite-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Label, TextInput, Button, Alert, Spinner } from "flowbite-react";
+import { useState } from "react";
 
 export default function SignUp() {
+  const [inputData, setInputData] = useState({});
+  const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [loding, setLoding] = useState(false);
   return (
-    <div className="min-h-screen mt-20">
-      <div className="flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5">
+    <div className="min-h-screen mt-32">
+      <div className="flex flex-col p-10 gap-6  max-w-4xl mx-auto md:flex-row">
         {/* left */}
-        <div className="flex-1">
-          <Link to="/" className="font-bold dark:text-white text-4xl">
-            <span className="px-2 py-1 bg-gradient-to-r from-pink-500 to-violet-500 rounded-lg text-white">
-              Sahand's
-            </span>
+        <div className="flex-1 ">
+          <Button gradientDuoTone="purpleToPink" className="mt-6 text-3xl">
             Blog
-          </Link>
+          </Button>
           <p className="text-sm mt-5">
-            {/* big paragraph */}
-            lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat est
-            voluptatibus, doloribus autem quibusdam, quae voluptatem quidem
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum quas
+            nihil, rem aperiam voluptas saepe ut culpa vitae deleniti excepturi
+            minima laboriosam, accusantium
           </p>
         </div>
         {/* right */}
         <div className="flex-1">
-          <form className="flex flex-col gap-4 ">
-            <div className="">
-              <Label value="Your username" />
-              <TextInput type="text" placeholder="username" id="username" />
-            </div>
-            <div className="">
-              <Label value="Your email" />
+          <form onSubmit={handleSubmit}>
+            {/* form group username */}
+            <div>
+              <Label>UserName</Label>
               <TextInput
                 type="text"
-                placeholder="name@company.com"
-                id="email"
+                placeholder="username"
+                id="username"
+                onChange={handleInputChange}
               />
             </div>
-            <div className="">
-              <Label value="Your password" />
-              <TextInput type="password" placeholder="password" id="password" />
+            {/* form group email */}
+            <div>
+              <Label>Email</Label>
+              <TextInput
+                type="email"
+                placeholder="email"
+                id="email"
+                onChange={handleInputChange}
+              />
             </div>
-            <Button gradientDuoTone="purpleToPink" type="submit">
+            {/* form group */}
+            <div>
+              <Label>Password</Label>
+              <TextInput
+                type="password"
+                placeholder="password"
+                id="password"
+                onChange={handleInputChange}
+              />
+            </div>
+            <Button
+              gradientDuoTone="purpleToPink"
+              className="w-full mt-5"
+              type="submit"
+              disabled={loding}
+            >
               Sign Up
             </Button>
           </form>
-          <div className="flex gap-2 text-sm mt-5">
+          <div className="mt-5">
             <span>Already have an account?</span>
-            <Link to="/sign-in" className="text-blue-600">
-              Sign In
+            <Link to="/sign-in" className="text-blue-500">
+              {loding ? (
+                <>
+                  <Spinner size="sm" /> <span className="pl-3">loading...</span>
+                </>
+              ) : (
+                "Sign In"
+              )}
             </Link>
           </div>
+          {errorMessage && (
+            <Alert className="mt-5" color="failure">
+              {errorMessage}
+            </Alert>
+          )}
         </div>
       </div>
     </div>
   );
+
+  function handleInputChange(e) {
+    const name = e.target.id;
+    const value = e.target.value;
+    setInputData({ ...inputData, [name]: value });
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    if (!inputData.username || !inputData.email || !inputData.password) {
+      setErrorMessage("All fields are required");
+      return;
+    }
+
+    try {
+      setLoding(true);
+      setErrorMessage(null);
+      const res = await fetch("/api/v1/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(inputData),
+      });
+
+      const data = await res.json();
+      if (data.status === "success") {
+        setLoding(false);
+        navigate("/sign-in");
+      } else {
+        setErrorMessage(data.message);
+        return;
+      }
+    } catch (err) {
+      setErrorMessage(err.message);
+      setLoding(false);
+      console.log(err);
+    }
+  }
 }

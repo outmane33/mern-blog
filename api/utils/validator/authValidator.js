@@ -1,6 +1,7 @@
 const { check } = require("express-validator");
 const validatorMiddleware = require("../../middlewares/validatorMiddleware");
 const User = require("../../models/userModel");
+const ApiError = require("../apiError");
 
 exports.signupValidator = [
   check("username")
@@ -9,7 +10,7 @@ exports.signupValidator = [
     .custom(async (val, { req }) => {
       const user = await User.findOne({ username: val });
       if (user) {
-        throw new Error("username already exists");
+        throw new ApiError("username already exists", 400);
       }
       return true;
     }),
@@ -21,7 +22,7 @@ exports.signupValidator = [
     .custom(async (val, { req }) => {
       const user = await User.findOne({ email: val });
       if (user) {
-        throw new Error("email already exists");
+        throw new ApiError("email already exists", 400);
       }
       return true;
     }),
