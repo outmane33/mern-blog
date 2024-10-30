@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Label, TextInput, Button, Alert, Spinner } from "flowbite-react";
 import { useState } from "react";
+import OAuth from "../components/OAuth";
 
 export default function SignUp() {
   const [inputData, setInputData] = useState({});
@@ -23,7 +24,7 @@ export default function SignUp() {
         </div>
         {/* right */}
         <div className="flex-1">
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             {/* form group username */}
             <div>
               <Label>UserName</Label>
@@ -62,6 +63,7 @@ export default function SignUp() {
             >
               Sign Up
             </Button>
+            <OAuth />
           </form>
           <div className="mt-5">
             <span>Already have an account?</span>

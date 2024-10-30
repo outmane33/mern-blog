@@ -1,5 +1,5 @@
 const express = require("express");
-const { signUp, signIn } = require("../services/authService");
+const { signUp, signIn, google } = require("../services/authService");
 const {
   signupValidator,
   signInValidator,
@@ -8,5 +8,6 @@ const router = express.Router();
 
 router.route("/signup").post(signupValidator, signUp);
 router.route("/signin").post(signInValidator, signIn);
+router.route("/google").post(google);
 
 module.exports = router;

@@ -1,32 +1,33 @@
-import {
-  SIGN_IN_START,
-  SIGN_IN_SUCCESS,
-  SIGN_IN_FAILURE,
-} from "../types/userTypes";
-
 const initialValue = {
-  user: null,
+  user: JSON.parse(localStorage.getItem("user")) || null,
   error: null,
   loading: false,
 };
 
 export const userReducer = (state = initialValue, action) => {
-  if (action.type === SIGN_IN_START) {
-    return {
-      loading: true,
-      error: null,
-    };
-  } else if (action.type === SIGN_IN_SUCCESS) {
-    return {
-      user: action.data,
-      loading: false,
-      error: null,
-    };
-  } else if (action.type === SIGN_IN_FAILURE) {
-    return {
-      loading: false,
-      error: action.data,
-    };
+  switch (action.type) {
+    case "SIGN_IN_START":
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
+    case "SIGN_IN_SUCCESS":
+      localStorage.setItem("user", JSON.stringify(action.data));
+      return {
+        ...state,
+        user: action.data,
+        loading: false,
+        error: null,
+      };
+    case "SIGN_IN_FAILURE":
+      return {
+        ...state,
+        loading: false,
+        error: action.data,
+        user: null,
+      };
+    default:
+      return state;
   }
-  return state;
 };
