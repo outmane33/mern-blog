@@ -38,3 +38,12 @@ exports.updateUserValidator = [
 
   validatorMiddleware,
 ];
+
+exports.deleteUserValidator = [
+  check("id")
+    .notEmpty()
+    .withMessage("user id is required")
+    .isMongoId()
+    .withMessage("invalid user id format"),
+  validatorMiddleware,
+];
