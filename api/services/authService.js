@@ -5,13 +5,9 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/userModel");
 const ApiError = require("../utils/apiError");
 const { sanitizeUser } = require("../utils/sanitizeData");
+const { generateToken } = require("../utils/generateToken");
 
 //generate token
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
-  });
-};
 
 exports.signUp = expressAsyncHandler(async (req, res, next) => {
   const user = await User.create({
@@ -91,4 +87,32 @@ exports.google = expressAsyncHandler(async (req, res, next) => {
         user: sanitizeUser(newUser),
       });
   }
+});
+
+exports.protect = expressAsyncHandler(async (req, res, next) => {
+  //get token
+  let token = req.cookies.access_token;
+  if (!token) {
+    return next(new ApiError("Not authorized to access this route", 401));
+  }
+  //verify token
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  //get user from token
+  const user = await User.findById(decoded.id);
+  if (!user) {
+    return next(new ApiError("Not authorized to access this route", 401));
+  }
+  //check is user changed password after token was issued
+  if (user.passwordChangedAt) {
+    const changedTimestamp = parseInt(
+      user.passwordChangedAt.getTime() / 1000,
+      10
+    );
+    if (decoded.iat < changedTimestamp) {
+      return next(new ApiError("User recently changed password", 401));
+    }
+  }
+  //grant access to protected route
+  req.user = user;
+  next();
 });

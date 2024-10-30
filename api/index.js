@@ -1,14 +1,15 @@
 const express = require("express");
 const path = require("path");
 const dotenv = require("dotenv");
-dotenv.config({ path: "./config.env" });
+const cookieParser = require("cookie-parser");
+const morgan = require("morgan");
 
+dotenv.config({ path: "./config.env" });
 const { dbConnection } = require("./config/connect");
 const globalerrorHandler = require("./middlewares/globalErrorMiddleware");
 
+const userRoute = require("./routes/userRoute");
 const authRoute = require("./routes/authRoute");
-const morgan = require("morgan");
-
 //express aapp
 const app = express();
 
@@ -16,6 +17,7 @@ const app = express();
 dbConnection();
 
 //middlewares
+app.use(cookieParser());
 app.use(express.json({ limit: "50kb" }));
 app.use(express.static(path.join(__dirname, "uploads")));
 if (process.env.NODE_ENV === "development") {
@@ -24,6 +26,7 @@ if (process.env.NODE_ENV === "development") {
 
 //mout routes
 app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/user", userRoute);
 
 //global error handler
 app.use(globalerrorHandler);

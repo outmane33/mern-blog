@@ -8,11 +8,13 @@ import "react-circular-progressbar/dist/styles.css";
 
 export default function DashProfile() {
   const user = useSelector((state) => state.user.user);
+  // image upload
   const [imageFile, setImageFile] = useState(null);
   const [imageFileUrl, setImageFileUrl] = useState(null);
   const filePickerRef = useRef();
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState(null);
   const [imageFileUploadError, setImageFileUploadError] = useState(null);
+  //input file change
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     //file must be an image
@@ -27,12 +29,14 @@ export default function DashProfile() {
       setImageFileUrl(URL.createObjectURL(file));
     }
   };
+  //when image is uploaded
   useEffect(() => {
     if (imageFile) {
       uploadImage();
     }
   }, [imageFile]);
 
+  //upload image to firebase
   const uploadImage = async () => {
     // service firebase.storage {
     //   match /b/{bucket}/o {
@@ -68,6 +72,7 @@ export default function DashProfile() {
       }
     );
   };
+
   return (
     <div className="max-w-lg w-full mx-auto p-3 text-center">
       <h1 className="my-7 text-center font-semibold text-3xl">Profile </h1>
