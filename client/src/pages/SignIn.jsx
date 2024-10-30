@@ -30,7 +30,7 @@ export default function Signin() {
         </div>
         {/* {/ right /} */}
         <div className="flex-1">
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             {/* {/ form group email /} */}
             <div>
               <Label>Email</Label>
@@ -53,7 +53,7 @@ export default function Signin() {
             </div>
             <Button
               gradientDuoTone="purpleToPink"
-              className="w-full mt-5"
+              className="w-full"
               type="submit"
               disabled={loading}
             >
