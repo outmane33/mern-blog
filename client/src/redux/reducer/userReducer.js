@@ -8,6 +8,7 @@ import {
   DELETE_USER_START,
   DELETE_USER_SUCCESS,
   DELETE_USER_FAILURE,
+  LOGOUT_SUCCESS,
 } from "../types/userTypes";
 
 const initialValue = {
@@ -78,6 +79,15 @@ export const userReducer = (state = initialValue, action) => {
         ...state,
         loading: false,
         error: action.data,
+      };
+    case LOGOUT_SUCCESS:
+      localStorage.removeItem("user");
+      console.log("logout");
+      return {
+        ...state,
+        user: null,
+        loading: false,
+        error: null,
       };
     default:
       return state;

@@ -116,3 +116,9 @@ exports.protect = expressAsyncHandler(async (req, res, next) => {
   req.user = user;
   next();
 });
+
+exports.signOut = expressAsyncHandler(async (req, res, next) => {
+  res.clearCookie("access_token").status(200).json({
+    status: "success",
+  });
+});

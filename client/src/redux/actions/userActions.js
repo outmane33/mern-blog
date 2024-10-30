@@ -8,6 +8,7 @@ import {
   DELETE_USER_START,
   DELETE_USER_SUCCESS,
   DELETE_USER_FAILURE,
+  LOGOUT_SUCCESS,
 } from "../types/userTypes";
 
 export const signInStart = () => {
@@ -43,4 +44,8 @@ export const deleteSuccess = () => {
 };
 export const deleteFailure = (data) => {
   return { type: DELETE_USER_FAILURE, data: data };
+};
+
+export const logoutSuccess = () => {
+  return { type: LOGOUT_SUCCESS };
 };

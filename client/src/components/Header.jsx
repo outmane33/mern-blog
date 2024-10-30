@@ -1,16 +1,34 @@
 import { Button, Navbar, TextInput, Dropdown, Avatar } from "flowbite-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AiOutlineSearch } from "react-icons/ai";
 import { FaMoon, FaSun } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import { toggleTheme } from "../redux/actions/themeActions";
+import { logoutSuccess } from "../redux/actions/userActions";
 
 export default function Header() {
   const path = useLocation().pathname;
   const user = useSelector((state) => state.user.user);
   const theme = useSelector((state) => state.theme.theme);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const handleSignOut = async () => {
+    try {
+      const res = await fetch("/api/v1/auth/signout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
+      const data = await res.json();
+      if (data.status === "success") {
+        dispatch(logoutSuccess());
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <Navbar className="border-b-2">
       <Button className="order-1" gradientDuoTone="purpleToPink">
@@ -50,10 +68,14 @@ export default function Header() {
               <Dropdown.Item>Profile</Dropdown.Item>
             </Link>
             <Dropdown.Divider />
-            <Dropdown.Item>Sign out</Dropdown.Item>
+            <Dropdown.Item onClick={handleSignOut}>Sign out</Dropdown.Item>
           </Dropdown>
         ) : (
-          <Button gradientDuoTone="purpleToBlue" outline>
+          <Button
+            gradientDuoTone="purpleToBlue"
+            outline
+            onClick={() => navigate("/sign-in")}
+          >
             Sign In
           </Button>
         )}
