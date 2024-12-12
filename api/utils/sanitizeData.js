@@ -4,5 +4,7 @@ exports.sanitizeUser = (user) => {
     username: user.username,
     email: user.email,
     profilePicture: user.profilePicture,
+    isAdmin: user.isAdmin,
+    createdAt: user.createdAt,
   };
 };

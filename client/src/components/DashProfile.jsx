@@ -8,8 +8,6 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase";
-import { CircularProgressbar } from "react-circular-progressbar";
-import "react-circular-progressbar/dist/styles.css";
 import {
   updateStart,
   updateSuccess,
@@ -21,10 +19,14 @@ import {
 } from "../redux/actions/userActions";
 import { useDispatch } from "react-redux";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
+import { CircularProgressbar } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
+import { Link } from "react-router-dom";
 export default function DashProfile() {
   //update user
   const user = useSelector((state) => state.user.user);
   const error = useSelector((state) => state.user.error);
+  const loading = useSelector((state) => state.user.loading);
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({});
   const [updateUserSuccess, setUpdateUserSuccess] = useState(false);
@@ -62,16 +64,6 @@ export default function DashProfile() {
 
   //upload image to firebase
   const uploadImage = async () => {
-    // service firebase.storage {
-    //   match /b/{bucket}/o {
-    //     match /{allPaths=**} {
-    //       allow read;
-    //       allow write: if
-    //       request.resource.size < 2 * 1024 * 1024 &&
-    //       request.resource.contentType.matches('image/.*')
-    //     }
-    //   }
-    // }
     setImageFileUploading(true);
     setImageFileUploadError(null);
     const storage = getStorage(app);
@@ -187,6 +179,7 @@ export default function DashProfile() {
       console.log(error);
     }
   };
+
   return (
     <div className="max-w-lg w-full mx-auto p-3 text-center">
       <h1 className="my-7 text-center font-semibold text-3xl">Profile </h1>
@@ -256,9 +249,22 @@ export default function DashProfile() {
           placeholder="password"
           onChange={handleChange}
         />
-        <Button outline type="submit">
-          Update
-        </Button>
+        <button
+          type="submit"
+          className="border-black border text-black hover:bg-black hover:text-white w-full py-2  rounded-lg mt-5 transition-all duration-300 dark:text-white dark:border-white dark:hover:bg-white dark:hover:text-black"
+          disabled={loading || imageFileUploading}
+        >
+          {loading || imageFileUploading ? "Updating..." : "Update Profile"}
+        </button>
+        {user.isAdmin ? (
+          <Link to="/create-post">
+            <Button gradientDuoTone="purpleToPink" outline className="w-full">
+              Create a Post
+            </Button>
+          </Link>
+        ) : (
+          ""
+        )}
       </form>
       <div className="my-5 text-red-500 flex justify-between">
         <span

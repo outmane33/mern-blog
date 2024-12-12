@@ -5,6 +5,7 @@ import { FaMoon, FaSun } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import { toggleTheme } from "../redux/actions/themeActions";
 import { logoutSuccess } from "../redux/actions/userActions";
+import { useEffect, useState } from "react";
 
 export default function Header() {
   const path = useLocation().pathname;
@@ -12,6 +13,15 @@ export default function Header() {
   const theme = useSelector((state) => state.theme.theme);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  //saerch
+  const [saerchTerm, setSaerchTerm] = useState("");
+  const location = useLocation();
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const keywordFromUrl = urlParams.get("keyword");
+    setSaerchTerm(keywordFromUrl);
+  }, [location.search]);
   const handleSignOut = async () => {
     try {
       const res = await fetch("/api/v1/auth/signout", {
@@ -29,16 +39,25 @@ export default function Header() {
       console.log(error);
     }
   };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const urlParams = new URLSearchParams();
+    urlParams.set("keyword", saerchTerm);
+    navigate(`/search?${urlParams.toString()}`);
+  };
+
   return (
     <Navbar className="border-b-2">
-      <Button className="order-1" gradientDuoTone="purpleToPink">
-        Blog
-      </Button>
-      <TextInput
-        type="text"
-        rightIcon={AiOutlineSearch}
-        className="order-2 hidden sm:inline"
-      />
+      <p className="text-2xl font-semibold">JS</p>
+      <form onSubmit={handleSubmit} className="order-2 hidden sm:inline">
+        <TextInput
+          type="text"
+          rightIcon={AiOutlineSearch}
+          value={saerchTerm}
+          onChange={(e) => setSaerchTerm(e.target.value)}
+        />
+      </form>
       <Button className="order-2 sm:hidden " pill color="gray">
         <AiOutlineSearch />
       </Button>
@@ -71,13 +90,12 @@ export default function Header() {
             <Dropdown.Item onClick={handleSignOut}>Sign out</Dropdown.Item>
           </Dropdown>
         ) : (
-          <Button
-            gradientDuoTone="purpleToBlue"
-            outline
+          <button
+            className="border-black border text-black hover:bg-black hover:text-white w-full py-2 uppercase rounded-lg px-4 text-sm transition-all duration-300 dark:text-white dark:border-white dark:hover:bg-white dark:hover:text-black"
             onClick={() => navigate("/sign-in")}
           >
             Sign In
-          </Button>
+          </button>
         )}
 
         <Navbar.Toggle />

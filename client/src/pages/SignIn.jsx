@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Label, TextInput, Button, Alert, Spinner } from "flowbite-react";
+import { Label, TextInput, Alert, Spinner } from "flowbite-react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -16,12 +16,10 @@ export default function Signin() {
   const dispatch = useDispatch();
   return (
     <div className="min-h-screen mt-32">
-      <div className="flex flex-col p-10 gap-6  max-w-4xl mx-auto md:flex-row">
+      <div className="flex flex-col p-10 gap-8  max-w-4xl mx-auto md:flex-row">
         {/* left */}
         <div className="flex-1 ">
-          <Button gradientDuoTone="purpleToPink" className="mt-6 text-3xl">
-            Blog
-          </Button>
+          <p className="text-5xl font-semibold">JS</p>
           <p className="text-sm mt-5">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum quas
             nihil, rem aperiam voluptas saepe ut culpa vitae deleniti excepturi
@@ -51,14 +49,13 @@ export default function Signin() {
                 onChange={handleInputChange}
               />
             </div>
-            <Button
-              gradientDuoTone="purpleToPink"
-              className="w-full"
+            <button
+              className="border-black border text-black hover:bg-black hover:text-white w-full py-2 uppercase rounded-lg mt-5 transition-all duration-300 dark:text-white dark:border-white dark:hover:bg-white dark:hover:text-black"
               type="submit"
               disabled={loading}
             >
               Sign In
-            </Button>
+            </button>
             <OAuth />
           </form>
           <div className="mt-5">

@@ -7,8 +7,6 @@ const ApiError = require("../utils/apiError");
 const { sanitizeUser } = require("../utils/sanitizeData");
 const { generateToken } = require("../utils/generateToken");
 
-//generate token
-
 exports.signUp = expressAsyncHandler(async (req, res, next) => {
   const user = await User.create({
     username: req.body.username,
@@ -46,10 +44,6 @@ exports.signIn = expressAsyncHandler(async (req, res, next) => {
 });
 
 exports.google = expressAsyncHandler(async (req, res, next) => {
-  //name
-  //email
-  //googlePhotoUrl
-  //get user
   const user = await User.findOne({ email: req.body.email });
   if (user) {
     //generate token
@@ -112,7 +106,6 @@ exports.protect = expressAsyncHandler(async (req, res, next) => {
       return next(new ApiError("User recently changed password", 401));
     }
   }
-  //grant access to protected route
   req.user = user;
   next();
 });
@@ -121,4 +114,12 @@ exports.signOut = expressAsyncHandler(async (req, res, next) => {
   res.clearCookie("access_token").status(200).json({
     status: "success",
   });
+});
+
+//just for admin
+exports.allowToAdmin = expressAsyncHandler(async (req, res, next) => {
+  if (!req.user.isAdmin) {
+    return next(new ApiError("Not authorized to access this route", 401));
+  }
+  next();
 });

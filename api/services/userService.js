@@ -4,6 +4,7 @@ const User = require("../models/userModel");
 const ApiError = require("../utils/apiError");
 const { sanitizeUser } = require("../utils/sanitizeData");
 const { generateToken } = require("../utils/generateToken");
+const apiFeature = require("../utils/apiFeature");
 
 exports.updateUser = expressAsyncHandler(async (req, res, next) => {
   const user = await User.findByIdAndUpdate(
@@ -48,5 +49,46 @@ exports.deleteUser = expressAsyncHandler(async (req, res, next) => {
   }
   res.status(200).json({
     status: "success",
+  });
+});
+
+exports.getAllUsers = expressAsyncHandler(async (req, res, next) => {
+  const count = await User.countDocuments();
+  const features = new apiFeature(User.find(), req.query)
+    .pagination(count)
+    .filtering()
+    .sorting()
+    .fields()
+    .search();
+  const { mongooseQuery, paginationResult } = features;
+
+  let users = await mongooseQuery;
+  users = users.map((user) => sanitizeUser(user));
+
+  //last month total users
+  const lastMonth = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+  const lastMonthUsers = await User.countDocuments({
+    createdAt: { $gte: lastMonth },
+  });
+
+  res.status(200).json({
+    status: "success",
+    results: users.length,
+    totalUsers: count,
+    paginationResult,
+    lastMonthUsers,
+    users,
+  });
+});
+
+exports.getUser = expressAsyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    return next(new ApiError("User not found", 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    user: sanitizeUser(user),
   });
 });

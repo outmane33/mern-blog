@@ -10,6 +10,11 @@ const globalerrorHandler = require("./middlewares/globalErrorMiddleware");
 
 const userRoute = require("./routes/userRoute");
 const authRoute = require("./routes/authRoute");
+const postRoute = require("./routes/postRoute");
+const commentRoute = require("./routes/commentRoute");
+
+// const __dirname = path.resolve();
+
 //express aapp
 const app = express();
 
@@ -19,7 +24,6 @@ dbConnection();
 //middlewares
 app.use(cookieParser());
 app.use(express.json({ limit: "50kb" }));
-app.use(express.static(path.join(__dirname, "uploads")));
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
@@ -27,7 +31,13 @@ if (process.env.NODE_ENV === "development") {
 //mout routes
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/user", userRoute);
+app.use("/api/v1/post", postRoute);
+app.use("/api/v1/comment", commentRoute);
 
+app.use(express.static(path.join(__dirname, "client/dist")));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
+});
 //global error handler
 app.use(globalerrorHandler);
 

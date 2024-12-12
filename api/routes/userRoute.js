@@ -1,16 +1,24 @@
 const express = require("express");
-const { protect } = require("../services/authService");
-const { updateUser, deleteUser } = require("../services/userService");
+const { protect, allowToAdmin } = require("../services/authService");
+const {
+  updateUser,
+  deleteUser,
+  getAllUsers,
+  getUser,
+} = require("../services/userService");
 const {
   updateUserValidator,
   deleteUserValidator,
+  getUserValidator,
 } = require("../utils/validator/userValidator");
 const router = express.Router();
 
-router.use(protect);
+router.route("/").get(protect, allowToAdmin, getAllUsers);
+
 router
   .route("/:id")
-  .put(updateUserValidator, updateUser)
-  .delete(deleteUserValidator, deleteUser);
+  .get(getUserValidator, getUser)
+  .put(protect, updateUserValidator, updateUser)
+  .delete(protect, deleteUserValidator, deleteUser);
 
 module.exports = router;

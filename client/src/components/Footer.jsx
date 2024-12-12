@@ -1,4 +1,4 @@
-import { Button, Footer } from "flowbite-react";
+import { Footer } from "flowbite-react";
 import {
   BsFacebook,
   BsInstagram,
@@ -11,11 +11,7 @@ export default function FooterComponent() {
     <Footer container className="border border-t-8 border-teal-500">
       <div className="w-full max-w-7xl mx-auto">
         <div className="grid w-full justify-between sm:flex md:grid-cols-1">
-          <div>
-            <Button className="mt-5" gradientDuoTone="purpleToPink">
-              Blog
-            </Button>
-          </div>
+          <p className="text-4xl font-semibold">JS</p>
 
           <div className="grid grid-cols-2 gap-8 mt-4 sm:grid-cols-3 sm:gap-6">
             {/*  first column */}
