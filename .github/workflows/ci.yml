@@ -1,0 +1,67 @@
+name: CI/CD Pipeline for Node.js and React
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  # تشغيل CI للواجهة الخلفية
+  backend:
+    name: Backend CI
+    runs-on: ubuntu-latest
+
+    steps:
+      # سحب الكود
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # إعداد Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+
+      # تثبيت التبعيات
+      - name: Install dependencies
+        working-directory: ./api
+        run: npm install
+
+      # تشغيل الاختبارات
+      - name: Run backend tests
+        working-directory: ./api
+        run: npm test
+
+  # تشغيل CI للواجهة الأمامية
+  frontend:
+    name: Frontend CI
+    runs-on: ubuntu-latest
+
+    steps:
+      # سحب الكود
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # إعداد Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+
+      # تثبيت التبعيات
+      - name: Install dependencies
+        working-directory: ./client
+        run: npm install
+
+      # بناء الواجهة الأمامية
+      - name: Build React app
+        working-directory: ./client
+        run: npm run build
+
+      # تشغيل اختبارات الواجهة الأمامية
+      - name: Run frontend tests
+        working-directory: ./client
+        run: npm test
